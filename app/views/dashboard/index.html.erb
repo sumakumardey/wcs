@@ -161,6 +161,43 @@
       <!-- /.row -->
 
       <div class="row">
+           <div class="col-md-12">
+                <form class="nlq-form">
+                <div class="box">
+                     <input name="nlq-query" class="nlq-query col-md-12" type="text" placeholder="Ask a question..."/>
+                </div>
+                </form>
+           </div> <!-- .col -->
+      </div> <!-- .row -->
+
+      <div class="row nlq-results-row">
+           <div class="col-md-12">
+              <div class="box">
+
+            <div class="box-header with-border">
+              <h3 class="box-title">Query Results <span class="nlq-count">&nbsp;</span></h3>
+            </div>
+            <div class="box-body">
+                <table class="nlq-results-table col-md-12">
+                  <thead>
+                    <tr>
+                      <th>Time</th>
+                      <th>Patrol</th>
+                      <th>Leg</th>
+                      <th>Leader</th>
+                      <th>Species</th>
+                      <th>Observation</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+                </div>
+              </div>
+           </div> <!-- .col -->
+      </div>
+
+      <div class="row">
         <div class="col-md-12">
           <div class="box">
             <div class="box-header with-border">
@@ -327,6 +364,34 @@
 <script src="/static/dist/js/demo.js"></script>
 
 <script>
+$(".nlq-form").submit(function(event) {
+  query = $(".nlq-query").val();
+  $.ajax({
+    dataType: "json",
+    url: "/query.json",
+    data: {text: query},
+    success: function(data) {
+      var tbl_body = "";
+      $.each(data, function() {
+        tbl_row = "<tr>";
+        tbl_row += "<td>" + this.waypoint_date + "</td>"
+        tbl_row += "<td>" + this.patrol_id + "</td>"
+        tbl_row += "<td>" + this.patrol_leg_id + "</td>"
+        tbl_row += "<td>" + this.leader + "</td>"
+        tbl_row += "<td>" + this.species + "</td>"
+        tbl_row += "<td>" + this.observation_category_0 + " " + this.observation_category_1 + "</td>"
+        tbl_row += "</tr>";
+        tbl_body += tbl_row;
+      });
+      $(".nlq-results-table tbody").html(tbl_body);
+      $(".nlq-count").text("(" + data.length + ")");
+      console.log("Response Data",data);
+    }
+  });
+  event.preventDefault();
+});
+
+
 $("#sparkline1").sparkline([1,10,1,1,1,10,4,5,2,6,2], {
 	type: 'line',
 	width: '180',
